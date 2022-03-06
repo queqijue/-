@@ -72,7 +72,7 @@
 
 <script>
 import {connect} from "mqtt/dist/mqtt.js"
-const mqttUrl ='wxs://120.25.255.9:8084/mqtt'
+const mqttUrl ='wxs://120.77.233.212:8084/mqtt'
 export default {
   data () {
     return {
