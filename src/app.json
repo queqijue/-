@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/loging/main",
     "pages/index/main",
     "pages/logs/main"  ],
   "window": {
@@ -43,5 +44,9 @@
       "selectedIconPath": "static/tabs/uesr.png"
     }],
     "position": "bottom"
+  },
+  "usingComponents": {
+    "van-button": "vant-weapp/dist/button/index",
+    "van-field": "vant-weapp/dist/field/index"
   }
 }
