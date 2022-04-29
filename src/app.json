@@ -47,6 +47,9 @@
   },
   "usingComponents": {
     "van-button": "vant-weapp/dist/button/index",
-    "van-field": "vant-weapp/dist/field/index"
+    "van-field": "vant-weapp/dist/field/index",
+    "van-dialog": "vant-weapp/dist/dialog/index",
+    "van-toast": "vant-weapp/dist/toast/index",
+    "van-icon": "vant-weapp/dist/icon/index"
   }
 }

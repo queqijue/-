@@ -1,34 +1,46 @@
 <template>
   <div>
    <div class="header">
-     <div class="header-title">请登录</div>
-     <div class="header-info">Please Login Your Account</div>
+     <div v-if="isLogin">
+        <div class="header-title">请登录</div>
+        <div class="header-info">Please Login Your Account</div>
+     </div>
+     <div v-else>
+        <div class="header-title">请注册</div>
+        <div class="header-info">Please Register Your Account</div>
+     </div>
    </div>
    <div class="body">
      <div class="login-from">
        <van-field placeholder="请输入用户名" :value="inputUserName" @change="onUserNameChange"/>
-       <van-field placeholder="请输入密码" :value="inputPassWord" @change="onPassWordChange"/>
+       <van-field type="password" placeholder="请输入密码" :value="inputPassWord" @change="onPassWordChange"/>
+       <div v-if="!isLogin">
+         <van-field placeholder="请输入绑定手机号" :value="inputContect" @change="onContectChange"/>
+       </div>
      </div>
-     <van-button slot="button" round block color="#3d7ef9" @click="onClick" >登录</van-button>
+     <van-button slot="button" round block color="#3d7ef9" @click="onClick" >{{isLogin?'登录':'注册'}}</van-button>
      <div class="other-choice">
-       <span>注册账户</span>
+       <span @click="onRes">{{isLogin?'注册账户':'登录账户'}}</span>
        <span style="margin:0 30px">|</span>
        <span>忘记密码</span>
      </div>
      <div class="copyright-wrapper">
        <span class="copyright">Prower by 家居卫士</span>
      </div>
+     <van-toast id="van-toast" />
    </div>
   </div>
 </template>
 
 <script>
-
+import Toast from "vant-weapp/dist/toast/toast"
 export default {
   data () {
     return {
+    isLogin:true,  
     inputUserName:"",
-    inputPassWord:""
+    inputPassWord:"",
+    inPutContect:""
     }
   },
 
@@ -36,19 +48,79 @@ export default {
     onUserNameChange(event){
       var that=this
       that.$set(that,"inputUserName",event.mp.detail)
-      console.log("当前输入用户名为"+event.mp.detail)
     },
 
     onPassWordChange(event){
       var that=this
       that.$set(that,"inputPassWord",event.mp.detail)
-      console.log("当前输入密码为"+event.mp.detail)
     },
 
      onClick(event){
       var that=this
-      console.log("被点击了")
-    }
+      Toast.loading({
+        duration:0,
+        forbidClick:true,
+        message:that.isLogin?'登录中':'注册中'
+      })
+      setTimeout(()=>{
+        if (!that.isLogin) {
+          wx.setStorage({
+            key: "user",
+            data:{
+              username:that.inputUserName,
+              password:that.inputPassWord,
+              contect:that.inPutContect
+            },
+            success(res){
+              console.log(res)
+              Toast.success('注册成功')
+            },
+            fail(res){
+              console.log(res)
+              Toast.success('注册失败')
+            }
+          })
+        }else{
+          console.log('登录')
+          wx.getStorage({
+            key: "user",
+            data:{
+              username:that.inputUserName,
+              password:that.inputPassWord,
+              contect:that.inPutContect
+            },
+            success(res){
+              console.log(res.data)
+              if(that.inputUserName===res.data.username&&that.inputPassWord===res.data.password){
+                Toast.success('登录成功') 
+                setTimeout(()=>{
+                  wx.switchTab({
+                   url:"/pages/index/main"
+                  })
+                },500);
+              }else{
+                Toast.fail('用户名和密码错误')
+              }
+            },
+            fail(res){
+              console.log(res)
+              Toast.fail("数据库暂无注册用户")
+            }
+          })
+        }
+      },1000)
+    },
+
+    onRes(event){
+     var that=this
+     console.log("helloworld")
+     that.isLogin=!that.isLogin
+     console.log(that.isLogin)
+    },
+     onContectChange(event){
+      var that=this
+      that.$set(that,"inputContect",event.mp.detail)
+    },
   }
 }
 </script>
